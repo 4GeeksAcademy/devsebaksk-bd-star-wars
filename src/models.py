@@ -23,8 +23,8 @@ class User(db.Model):
     lastname: Mapped[str] = mapped_column(String(250), nullable= False)
     email: Mapped[str] = mapped_column(String(250), nullable = False)
     #Relaciones
-    favorites_planets: Mapped[list['Planets']] = relationship('Planets',secondary = favorites_planets ,back_populates='favorite_users')
-    favorites_people: Mapped[list['People']] = relationship('People',secondary = favorites_people ,back_populates='favorite_users')
+    favorites_planets: Mapped[list['Planets']] = relationship('Planets',secondary = favorites_planets ,back_populates='favorites_users')
+    favorites_people: Mapped[list['People']] = relationship('People',secondary = favorites_people ,back_populates='favorites_users')
 
     def serialize(self):
         return {"id":self.id, "username":self.username}
@@ -38,7 +38,7 @@ class Planets (db.Model):
     diameter: Mapped [int] = mapped_column(Integer, nullable=True)
     #Relaciones
     peoples: Mapped[list['People']] = relationship('People', back_populates='planet_id')
-    favorites_user: Mapped[list['User']] = relationship('User',secondary = favorites_planets ,back_populates='favorite_users')
+    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_planets ,back_populates='favorites_users')
     
 
 class People ( db.Model):
@@ -49,7 +49,8 @@ class People ( db.Model):
     eye_color: Mapped[str] = mapped_column(String(250), nullable=False)
     #Relaciones
     planet_id: Mapped[int] = mapped_column(Integer, ForeignKey('planets.id'))
-    favorites_user: Mapped[list['User']] = mapped_column(Integer,back_populates='favorite_users')
+    planet = relationship("Planet", back_populates="peoples")
+    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_people ,back_populates='favorites_users')
 
 
   
