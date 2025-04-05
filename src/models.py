@@ -37,8 +37,8 @@ class Planets (db.Model):
     climated: Mapped [str] = mapped_column(String(250), nullable=False)
     diameter: Mapped [int] = mapped_column(Integer, nullable=True)
     #Relaciones
-    peoples: Mapped[list['People']] = relationship('People', back_populates='planet_id')
-    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_planets ,back_populates='favorites_users')
+    peoples: Mapped[list['People']] = relationship('People', back_populates='planet')
+    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_planets ,back_populates='favorites_planets')
     
 
 class People ( db.Model):
@@ -47,10 +47,11 @@ class People ( db.Model):
     birth_year: Mapped[str]= mapped_column(String(250), nullable=False)
     height : Mapped[int]= mapped_column(Integer, nullable=False)
     eye_color: Mapped[str] = mapped_column(String(250), nullable=False)
+    planet_id: Mapped[int] = mapped_column(Integer, nullable=False)
     #Relaciones
     planet_id: Mapped[int] = mapped_column(Integer, ForeignKey('planets.id'))
-    planet = relationship("Planet", back_populates="peoples")
-    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_people ,back_populates='favorites_users')
+    planet = relationship("Planets", back_populates="peoples")
+    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_people ,back_populates='favorites_people')
 
 
   
