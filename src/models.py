@@ -23,13 +23,22 @@ class User(db.Model):
     lastname: Mapped[str] = mapped_column(String(250), nullable= False)
     email: Mapped[str] = mapped_column(String(250), nullable = False)
     #Relaciones
-    favorites_planets: Mapped[list['Planets']] = relationship('Planets',secondary = favorites_planets ,back_populates='favorites_users')
-    favorites_people: Mapped[list['People']] = relationship('People',secondary = favorites_people ,back_populates='favorites_users')
+    favorites = relationship("Favorites", back_populates="user")
+
 
     def serialize(self):
-        return {"id":self.id, "username":self.username}
+        return {"id":self.id,
+                "username":self.username,
+                "firstname":self.firstname,
+                "lastname":self.lastname,
+                "email":self.email
+                }
 
 class Planets (db.Model):
+
+    __tablename__='planets'
+
+
     id: Mapped[int] = mapped_column(primary_key = True)
     name: Mapped[str] = mapped_column(String(250), nullable=False)
     population: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -37,8 +46,20 @@ class Planets (db.Model):
     climated: Mapped [str] = mapped_column(String(250), nullable=False)
     diameter: Mapped [int] = mapped_column(Integer, nullable=True)
     #Relaciones
-    peoples: Mapped[list['People']] = relationship('People', back_populates='planet')
-    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_planets ,back_populates='favorites_planets')
+
+
+    
+
+    def serialize(self):
+        return{
+            "id":self.id,
+            "name": self.name,
+            "population": self.population,
+            "terrain": self.terrain,
+            "climated": self.climated,
+            "diameter": self.diameter
+        }
+    
     
 
 class People ( db.Model):
@@ -49,9 +70,28 @@ class People ( db.Model):
     eye_color: Mapped[str] = mapped_column(String(250), nullable=False)
     planet_id: Mapped[int] = mapped_column(Integer, nullable=False)
     #Relaciones
-    planet_id: Mapped[int] = mapped_column(Integer, ForeignKey('planets.id'))
-    planet = relationship("Planets", back_populates="peoples")
-    favorites_users: Mapped[list['User']] = relationship('User',secondary = favorites_people ,back_populates='favorites_people')
+
+    def serialize(self):
+        return{
+            "id":self.id,
+            "name": self.name,
+            "birth_year": self.birth_year,
+            "height": self.height,
+            "eye_color": self.eye_color,
+            "planet_id": self.planet_id
+        }
 
 
-  
+class Favorites(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
+    people_id: Mapped[int] = mapped_column(ForeignKey('people.id'), nullable=True)
+    planet_id: Mapped[int] = mapped_column(ForeignKey('planets.id'), nullable=True)
+
+    def serialize(self):
+        return {
+        "id": self.id,
+        "user_id": self.user_id,
+        "planet_id": self.planet_id
+    }
+    user = relationship("User", back_populates="favorites")
