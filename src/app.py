@@ -74,7 +74,6 @@ def create_user():
 
     try:
         user = User(username=data["username"],
-                    id=random.randint(100, 999999),
                     firstname=data["firstname"],
                     lastname=data["lastname"],
                     email=data["email"]
@@ -99,7 +98,6 @@ def create_fav_planet(planet_id):
 
     try:
         fav_planet = Favorites(user_id=data["user_id"],
-                    id=random.randint(1, 9999),
                     planet_id=planet_id
                     )
         db.session.add(fav_planet)
@@ -119,7 +117,6 @@ def create_fav_people(people_id):
 
     try:
         fav_people = Favorites(user_id=data["user_id"],
-                    id=random.randint(1, 9999),
                     people_id=people_id
                     )
         db.session.add(fav_people)
